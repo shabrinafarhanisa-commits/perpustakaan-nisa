@@ -241,6 +241,11 @@ a:hover { color: oklch(0.82 0.13 165); }
               </div>
               <div style="font-size:13.5px; color:var(--muted); line-height:1.55; margin-bottom:8px;">{{ n.blurb }}</div>
               <div style="font-size:11.5px; color:var(--muted2); font-family:monospace;">{{ n.chapterLabel }}</div>
+              <div style="display:flex; align-items:center; gap:14px; margin-top:10px; font-family:monospace; font-size:12px; color:var(--muted2);">
+                <button type="button" onClick="{{ n.onLikeClick }}" style="display:flex; align-items:center; gap:4px; background:transparent; border:none; padding:0; cursor:pointer; color:{{ n.likeColor }}; font-family:inherit; font-size:12px;">{{ n.likeIcon }} {{ n.likeCount }}</button>
+                <span onClick="{{ n.onCommentClick }}" style="display:flex; align-items:center; gap:4px; cursor:pointer;">&#128172; {{ n.commentCount }}</span>
+                <button type="button" onClick="{{ n.onShareClick }}" style="margin-left:auto; background:transparent; border:none; padding:0; cursor:pointer; color:var(--muted2); font-family:inherit; font-size:12px;">{{ n.shareLabel }}</button>
+              </div>
             </div>
           </div>
         </sc-for>
@@ -292,6 +297,8 @@ a:hover { color: oklch(0.82 0.13 165); }
           </sc-for>
         </div>
       </div>
+
+      <div id="novel-engagement-root" data-slug="{{ selectedSlug }}"></div>
     </div>
   </sc-if>
 
@@ -456,7 +463,7 @@ const EN_HEADINGS = {
 };
 
 class Component extends DCLogic {
-  state = { view: 'home', filterGenre: null, selectedSlug: null, selectedChapterNum: null, novelCache: {}, bookmarks: [], history: {}, novels: [], lang: 'id', theme: 'dark', searchQuery: '' };
+  state = { view: 'home', filterGenre: null, selectedSlug: null, selectedChapterNum: null, novelCache: {}, bookmarks: [], history: {}, novels: [], lang: 'id', theme: 'dark', searchQuery: '', novelEngagement: {}, shareCopiedSlug: null };
 
   THEME_VARS = {
     dark: { '--bg-page':'#0f1216', '--bg-header':'rgba(15,18,22,0.72)', '--wash-a':'oklch(0.22 0.09 25 / 0.5)', '--wash-b':'oklch(0.2 0.09 250 / 0.45)', '--wash-a-size':'65% 50%', '--text':'#eef1f3', '--secondary':'#c4cbd1', '--muted':'#8b96a1', '--muted2':'#5c6670', '--border':'#262d35', '--card':'#151a20', '--reader-text':'#dfe4e8' },
@@ -476,9 +483,75 @@ class Component extends DCLogic {
       this.setState({ bookmarks: bm, history: hist, theme });
       this.applyTheme(theme);
     } catch (e) {}
-    fetch('./data/index.json').then(r => r.json()).then(idx => this.setState({ novels: idx })).catch(() => {});
+    fetch('./data/index.json').then(r => r.json()).then(idx => {
+      this.setState({ novels: idx });
+      this.loadNovelEngagement(idx);
+      this.hydrateNovelOnlyHash(idx);
+    }).catch(() => {});
     this.hydrateFromHash();
   }
+
+  // A `#/slug` (no chapter) link needs the novels index loaded first, since the novel
+  // detail view reads its metadata from `state.novels`. Handled separately from
+  // hydrateFromHash so the `#/slug/chapter` path (which fetches its own novel data and
+  // doesn't depend on the index) keeps working exactly as before, in one render step.
+  hydrateNovelOnlyHash = (idx) => {
+    const m = /^#\/([a-z0-9-]+)$/.exec(location.hash);
+    if (!m) return;
+    const slug = m[1];
+    if (!idx.some(n => n.slug === slug)) return;
+    this.ensureLoaded(slug);
+    this.setState({ view: 'novel', selectedSlug: slug });
+  };
+
+  loadNovelEngagement = (idx) => {
+    idx.forEach(n => {
+      const slug = n.slug;
+      fetch('/api/likes?slug=' + encodeURIComponent(slug) + '&level=novel', { credentials: 'same-origin' })
+        .then(r => r.json())
+        .then(data => this.setState(s => ({ novelEngagement: { ...s.novelEngagement, [slug]: { ...(s.novelEngagement[slug] || {}), likeCount: data.count, liked: !!data.liked } } })))
+        .catch(() => {});
+      fetch('/api/comments/count?slug=' + encodeURIComponent(slug) + '&level=novel', { credentials: 'same-origin' })
+        .then(r => r.json())
+        .then(data => this.setState(s => ({ novelEngagement: { ...s.novelEngagement, [slug]: { ...(s.novelEngagement[slug] || {}), commentCount: data.count } } })))
+        .catch(() => {});
+    });
+  };
+
+  toggleNovelLike = (slug) => {
+    const eng = this.state.novelEngagement[slug];
+    if (eng && (eng.liked || eng.liking)) return;
+    this.setState(s => ({ novelEngagement: { ...s.novelEngagement, [slug]: { ...(s.novelEngagement[slug] || {}), liking: true } } }));
+    fetch('/api/likes', {
+      method: 'POST', credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ slug: slug, level: 'novel' }),
+    }).then(r => r.json())
+      .then(data => this.setState(s => ({ novelEngagement: { ...s.novelEngagement, [slug]: { ...(s.novelEngagement[slug] || {}), likeCount: data.count, liked: !!data.liked, liking: false } } })))
+      .catch(() => this.setState(s => ({ novelEngagement: { ...s.novelEngagement, [slug]: { ...(s.novelEngagement[slug] || {}), liking: false } } })));
+  };
+
+  shareNovel = (slug) => {
+    const url = location.origin + location.pathname + '#/' + slug;
+    if (navigator.share) {
+      navigator.share({ url: url }).catch(() => {});
+      return;
+    }
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(url).then(() => {
+        this.setState({ shareCopiedSlug: slug });
+        setTimeout(() => this.setState(s => (s.shareCopiedSlug === slug ? { shareCopiedSlug: null } : null)), 2000);
+      }).catch(() => {});
+    }
+  };
+
+  jumpToNovelComments = (slug) => {
+    this.openNovel(slug);
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      const el = document.getElementById('novel-engagement-root');
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }));
+  };
 
   toggleLang = () => this.setState(s => ({ lang: s.lang === 'id' ? 'en' : 'id' }));
 
@@ -521,14 +594,14 @@ class Component extends DCLogic {
 
   goHome = () => { location.hash = ''; this.setState({ view: 'home', selectedSlug: null, selectedChapterNum: null }); };
   goUniverse = () => this.setState({ view: 'universe' });
-  openNovel = (slug) => { this.ensureLoaded(slug); this.setState({ view: 'novel', selectedSlug: slug }); };
+  openNovel = (slug) => { this.ensureLoaded(slug); location.hash = '#/' + slug; this.setState({ view: 'novel', selectedSlug: slug }); };
   startReading = (slug, chapterNum) => { this.ensureLoaded(slug); const cn = chapterNum || 1; this.recordHistory(slug, cn); location.hash = '#/' + slug + '/' + cn; this.setState({ view: 'reader', selectedSlug: slug, selectedChapterNum: cn }); };
   backToNovel = () => this.setState({ view: 'novel' });
   goChapter = (num) => { this.recordHistory(this.state.selectedSlug, num); location.hash = '#/' + this.state.selectedSlug + '/' + num; this.setState({ selectedChapterNum: num }); };
 
   hydrateFromHash = () => {
     const m = /^#\/([a-z0-9-]+)\/(\d+)$/.exec(location.hash);
-    if (!m) return;
+    if (!m) return; // `#/slug` (no chapter) is handled by hydrateNovelOnlyHash once the novels index loads
     const slug = m[1];
     const requestedChapter = parseInt(m[2], 10);
     fetch('./data/' + slug + '.json').then(r => {
@@ -573,9 +646,20 @@ class Component extends DCLogic {
     const matchesSearch = (n) => !searchLower || [n.title, n.blurb, n.synopsis, ...(n.genre || [])].join(' ').toLowerCase().includes(searchLower);
     const byGenre = filterGenre ? idx.filter((n, i) => idxRaw[i].genre.includes(filterGenre)) : idx;
     const bySearch = byGenre.filter(matchesSearch);
-    const filtered = bySearch.map(n => ({
-      ...n, onOpen: () => this.openNovel(n.slug), coverUrl: './covers/' + n.slug + '.png', chapterLabel: chLabel(n.chapterCount),
-    }));
+    const filtered = bySearch.map(n => {
+      const eng = this.state.novelEngagement[n.slug] || {};
+      const liked = !!eng.liked;
+      const copied = this.state.shareCopiedSlug === n.slug;
+      return {
+        ...n, onOpen: () => this.openNovel(n.slug), coverUrl: './covers/' + n.slug + '.png', chapterLabel: chLabel(n.chapterCount),
+        likeIcon: liked ? '♥' : '♡', likeColor: liked ? 'oklch(0.72 0.15 165)' : 'var(--muted2)', likeCount: eng.likeCount || 0,
+        onLikeClick: (e) => { e.stopPropagation(); this.toggleNovelLike(n.slug); },
+        commentCount: eng.commentCount || 0,
+        onCommentClick: (e) => { e.stopPropagation(); this.jumpToNovelComments(n.slug); },
+        shareLabel: copied ? '✓' : '↗',
+        onShareClick: (e) => { e.stopPropagation(); this.shareNovel(n.slug); },
+      };
+    });
     const hasNoResults = filtered.length === 0;
 
     const view = this.state.view;
