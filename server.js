@@ -33,6 +33,10 @@ function isValidSlugChapter(slug, chapter) {
   return !!n && Number.isInteger(chapter) && chapter >= 1 && chapter <= n.chapterCount;
 }
 
+function isValidSlug(slug) {
+  return novelIndex.has(slug);
+}
+
 // --- database ---
 fs.mkdirSync(path.dirname(DB_PATH), { recursive: true });
 const db = new Database(DB_PATH);
@@ -42,6 +46,7 @@ db.exec(`
     id          INTEGER PRIMARY KEY AUTOINCREMENT,
     novel_slug  TEXT NOT NULL,
     chapter_num INTEGER NOT NULL,
+    level       TEXT NOT NULL DEFAULT 'chapter',
     name        TEXT NOT NULL,
     body        TEXT NOT NULL,
     status      TEXT NOT NULL DEFAULT 'pending',
@@ -54,41 +59,65 @@ db.exec(`
     id          INTEGER PRIMARY KEY AUTOINCREMENT,
     novel_slug  TEXT NOT NULL,
     chapter_num INTEGER NOT NULL,
+    level       TEXT NOT NULL DEFAULT 'chapter',
     fingerprint TEXT NOT NULL,
     created_at  TEXT NOT NULL DEFAULT (datetime('now')),
     UNIQUE(novel_slug, chapter_num, fingerprint)
   );
 `);
 
+// migration: `level` column didn't exist before novel-level engagement was added.
+// Harmless no-op on fresh DBs (column already created above).
+for (const table of ['comments', 'likes']) {
+  try {
+    db.exec(`ALTER TABLE ${table} ADD COLUMN level TEXT NOT NULL DEFAULT 'chapter'`);
+  } catch (err) {
+    if (!/duplicate column/i.test(err.message)) throw err;
+  }
+}
+
 const stmts = {
   approvedComments: db.prepare(
     `SELECT id, name, body, created_at FROM comments
-     WHERE novel_slug = ? AND chapter_num = ? AND status = 'approved'
+     WHERE novel_slug = ? AND chapter_num = ? AND level = ? AND status = 'approved'
      ORDER BY created_at ASC LIMIT 500`
   ),
   insertComment: db.prepare(
-    `INSERT INTO comments (novel_slug, chapter_num, name, body, ip_hash) VALUES (?, ?, ?, ?, ?)`
+    `INSERT INTO comments (novel_slug, chapter_num, level, name, body, ip_hash) VALUES (?, ?, ?, ?, ?, ?)`
   ),
   pendingComments: db.prepare(
-    `SELECT id, novel_slug, chapter_num, name, body, created_at FROM comments
+    `SELECT id, novel_slug, chapter_num, level, name, body, created_at FROM comments
      WHERE status = 'pending' ORDER BY created_at ASC`
   ),
   recentApproved: db.prepare(
-    `SELECT id, novel_slug, chapter_num, name, body, created_at FROM comments
+    `SELECT id, novel_slug, chapter_num, level, name, body, created_at FROM comments
      WHERE status = 'approved' ORDER BY created_at DESC LIMIT 50`
   ),
   approveComment: db.prepare(`UPDATE comments SET status = 'approved' WHERE id = ?`),
   deleteComment: db.prepare(`DELETE FROM comments WHERE id = ?`),
+  commentCount: db.prepare(
+    `SELECT COUNT(*) AS c FROM comments WHERE novel_slug = ? AND chapter_num = ? AND level = ? AND status = 'approved'`
+  ),
   likeCount: db.prepare(
-    `SELECT COUNT(*) AS c FROM likes WHERE novel_slug = ? AND chapter_num = ?`
+    `SELECT COUNT(*) AS c FROM likes WHERE novel_slug = ? AND chapter_num = ? AND level = ?`
   ),
   likeExists: db.prepare(
-    `SELECT 1 FROM likes WHERE novel_slug = ? AND chapter_num = ? AND fingerprint = ?`
+    `SELECT 1 FROM likes WHERE novel_slug = ? AND chapter_num = ? AND level = ? AND fingerprint = ?`
   ),
   insertLike: db.prepare(
-    `INSERT OR IGNORE INTO likes (novel_slug, chapter_num, fingerprint) VALUES (?, ?, ?)`
+    `INSERT OR IGNORE INTO likes (novel_slug, chapter_num, level, fingerprint) VALUES (?, ?, ?, ?)`
   ),
 };
+
+function levelAndChapter(slug, level, chapterRaw) {
+  if (level === 'novel') {
+    if (!isValidSlug(slug)) return null;
+    return { level: 'novel', chapterNum: 0 };
+  }
+  const chapterNum = parseInt(chapterRaw, 10);
+  if (!isValidSlugChapter(slug, chapterNum)) return null;
+  return { level: 'chapter', chapterNum };
+}
 
 function hashIp(ip) {
   return crypto.createHash('sha256').update(String(ip) + COOKIE_SECRET).digest('hex');
@@ -118,9 +147,18 @@ app.use(cookieParser(COOKIE_SECRET));
 
 app.get('/api/comments', (req, res) => {
   const slug = String(req.query.slug || '');
-  const chapter = parseInt(req.query.chapter, 10);
-  if (!isValidSlugChapter(slug, chapter)) return res.status(400).json({ error: 'invalid slug/chapter' });
-  res.json(stmts.approvedComments.all(slug, chapter));
+  const level = req.query.level === 'novel' ? 'novel' : 'chapter';
+  const resolved = levelAndChapter(slug, level, req.query.chapter);
+  if (!resolved) return res.status(400).json({ error: 'invalid slug/chapter' });
+  res.json(stmts.approvedComments.all(slug, resolved.chapterNum, resolved.level));
+});
+
+app.get('/api/comments/count', (req, res) => {
+  const slug = String(req.query.slug || '');
+  const level = req.query.level === 'novel' ? 'novel' : 'chapter';
+  const resolved = levelAndChapter(slug, level, req.query.chapter);
+  if (!resolved) return res.status(400).json({ error: 'invalid slug/chapter' });
+  res.json({ count: stmts.commentCount.get(slug, resolved.chapterNum, resolved.level).c });
 });
 
 const commentLimiter = rateLimit({
@@ -132,8 +170,9 @@ const commentLimiter = rateLimit({
 
 app.post('/api/comments', commentLimiter, (req, res) => {
   const { slug, chapter, name, body, hp } = req.body || {};
-  const chapterNum = parseInt(chapter, 10);
-  if (!isValidSlugChapter(slug, chapterNum)) return res.status(400).json({ error: 'invalid slug/chapter' });
+  const level = req.body && req.body.level === 'novel' ? 'novel' : 'chapter';
+  const resolved = levelAndChapter(slug, level, chapter);
+  if (!resolved) return res.status(400).json({ error: 'invalid slug/chapter' });
 
   const cleanName = String(name || '').trim();
   const cleanBody = String(body || '').trim();
@@ -143,24 +182,26 @@ app.post('/api/comments', commentLimiter, (req, res) => {
   // honeypot: bots fill hidden fields. Pretend success, don't store.
   if (hp) return res.status(201).json({ status: 'pending' });
 
-  stmts.insertComment.run(slug, chapterNum, cleanName, cleanBody, hashIp(req.ip));
+  stmts.insertComment.run(slug, resolved.chapterNum, resolved.level, cleanName, cleanBody, hashIp(req.ip));
   res.status(201).json({ status: 'pending' });
 });
 
 app.get('/api/likes', (req, res) => {
   const slug = String(req.query.slug || '');
-  const chapter = parseInt(req.query.chapter, 10);
-  if (!isValidSlugChapter(slug, chapter)) return res.status(400).json({ error: 'invalid slug/chapter' });
-  const count = stmts.likeCount.get(slug, chapter).c;
+  const level = req.query.level === 'novel' ? 'novel' : 'chapter';
+  const resolved = levelAndChapter(slug, level, req.query.chapter);
+  if (!resolved) return res.status(400).json({ error: 'invalid slug/chapter' });
+  const count = stmts.likeCount.get(slug, resolved.chapterNum, resolved.level).c;
   const fp = req.signedCookies.nisa_fp;
-  const liked = !!(fp && stmts.likeExists.get(slug, chapter, fp));
+  const liked = !!(fp && stmts.likeExists.get(slug, resolved.chapterNum, resolved.level, fp));
   res.json({ count, liked });
 });
 
 app.post('/api/likes', (req, res) => {
   const { slug, chapter } = req.body || {};
-  const chapterNum = parseInt(chapter, 10);
-  if (!isValidSlugChapter(slug, chapterNum)) return res.status(400).json({ error: 'invalid slug/chapter' });
+  const level = req.body && req.body.level === 'novel' ? 'novel' : 'chapter';
+  const resolved = levelAndChapter(slug, level, chapter);
+  if (!resolved) return res.status(400).json({ error: 'invalid slug/chapter' });
 
   let fp = req.signedCookies.nisa_fp;
   if (!fp) {
@@ -173,8 +214,8 @@ app.post('/api/likes', (req, res) => {
       maxAge: 5 * 365 * 24 * 60 * 60 * 1000,
     });
   }
-  stmts.insertLike.run(slug, chapterNum, fp);
-  const count = stmts.likeCount.get(slug, chapterNum).c;
+  stmts.insertLike.run(slug, resolved.chapterNum, resolved.level, fp);
+  const count = stmts.likeCount.get(slug, resolved.chapterNum, resolved.level).c;
   res.json({ count, liked: true });
 });
 
@@ -195,6 +236,7 @@ function requireAdmin(req, res, next) {
 
 function renderCommentRow(c, includeApproveReject) {
   const title = novelIndex.get(c.novel_slug)?.title || c.novel_slug;
+  const location = c.level === 'novel' ? 'komentar novel' : `chapter ${c.chapter_num}`;
   const actions = includeApproveReject
     ? `<form method="post" action="/admin/comments/${c.id}/approve" style="display:inline">
          <button type="submit">Approve</button>
@@ -206,7 +248,7 @@ function renderCommentRow(c, includeApproveReject) {
          <button type="submit">Delete</button>
        </form>`;
   return `<li style="margin-bottom:16px; padding:12px; border:1px solid #ccc;">
-    <div><strong>${escapeHtml(title)}</strong> — chapter ${c.chapter_num} — <em>${escapeHtml(c.created_at)}</em></div>
+    <div><strong>${escapeHtml(title)}</strong> — ${escapeHtml(location)} — <em>${escapeHtml(c.created_at)}</em></div>
     <div><strong>${escapeHtml(c.name)}</strong></div>
     <div style="white-space:pre-wrap;">${escapeHtml(c.body)}</div>
     <div style="margin-top:8px;">${actions}</div>
