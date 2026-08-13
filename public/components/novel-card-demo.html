@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8" />
+<base href="/public/" />
+<title>Novel Card — Preview</title>
+<style>
+  :root { --bg-page:#0f1216; --text:#eef1f3; --muted:#8b96a1; --muted2:#5c6670; --border:#262d35; --card:#151a20; }
+  body { margin:0; padding:40px; background:var(--bg-page); color:var(--text); font-family:'Work Sans',sans-serif; }
+</style>
+<link rel="stylesheet" href="components/novel-card.css" />
+</head>
+<body>
+  <div id="grid"></div>
+  <script src="components/novel-card.js"></script>
+  <script>
+    fetch('/novels.json')
+      .then((r) => r.json())
+      .then((novels) => renderNovelGrid(document.getElementById('grid'), novels, {
+        onOpen: (slug) => console.log('open', slug),
+      }));
+  </script>
+</body>
+</html>

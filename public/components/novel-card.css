@@ -1,0 +1,78 @@
+/* Extracted from Perpustakaan Nisa.dc.html — dark theme tokens (:root, lines 15/461)
+   and the two real card/badge rules that exist in the source:
+     - genre badge:  home grid card, line 240
+     - role badge:   novel detail page, line 266
+   The source has no gradient background and no hover state on cards —
+   see conversation. This component composes the two real badge styles
+   onto one card (the source only ever shows them on separate pages),
+   and adds one small hover affordance using the site's own existing
+   link-hover color (a:hover, line 19) since the source defines none. */
+
+.novel-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 30px;
+}
+
+.novel-card {
+  cursor: pointer;
+}
+
+.novel-card__cover {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  border: 1px solid var(--border, #262d35);
+  border-radius: 4px;
+  display: block;
+  transition: border-color 0.15s ease;
+}
+
+/* Addition, not present in source: subtle hover affordance. */
+.novel-card:hover .novel-card__cover {
+  border-color: oklch(0.72 0.15 165);
+}
+
+.novel-card__body {
+  margin-top: 14px;
+}
+
+.novel-card__badges {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.novel-card__genre {
+  font-size: 10px;
+  padding: 3px 9px;
+  border-radius: 3px;
+  background: oklch(0.24 0.045 165);
+  color: oklch(0.82 0.05 165);
+  font-family: 'Chakra Petch', sans-serif;
+  letter-spacing: 0.3px;
+}
+
+.novel-card__role {
+  display: inline-block;
+  font-family: monospace;
+  font-size: 11px;
+  color: oklch(0.72 0.15 165);
+  border: 1px solid oklch(0.32 0.08 165);
+  border-radius: 3px;
+  padding: 3px 9px;
+}
+
+.novel-card__blurb {
+  font-size: 13.5px;
+  color: var(--muted, #8b96a1);
+  line-height: 1.55;
+  margin-bottom: 8px;
+}
+
+.novel-card__chapters {
+  font-size: 11.5px;
+  color: var(--muted2, #5c6670);
+  font-family: monospace;
+}

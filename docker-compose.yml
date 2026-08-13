@@ -1,0 +1,20 @@
+services:
+  app:
+    build: https://github.com/REPLACE_ME/perpustakaan-nisa-app.git
+    restart: unless-stopped
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.perpustakaan-nisa.rule=Host(`perpustakaan-nisa.srv1896153.hstgr.cloud`)
+      - traefik.http.routers.perpustakaan-nisa.entrypoints=websecure
+      - traefik.http.routers.perpustakaan-nisa.tls.certresolver=letsencrypt
+      - traefik.http.services.perpustakaan-nisa.loadbalancer.server.port=3000
+    environment:
+      - ADMIN_USER=${ADMIN_USER}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+      - COOKIE_SECRET=${COOKIE_SECRET}
+      - DB_PATH=/data/app.db
+    volumes:
+      - nisa-data:/data
+
+volumes:
+  nisa-data:

@@ -1,0 +1,134 @@
+[
+  {
+    "slug": "kota-algoritma",
+    "title": "Kota Algoritma",
+    "order": 1,
+    "genre": ["Fiksi Ilmiah", "Romance"],
+    "role": "Prequel meta-tekstual",
+    "blurb": "Dystopia AI pengendali cinta; manifesto cinta Nisa muda usia 20-an, digemakan balik di Istana Penuh Bara dan Dokter Cinta Dunia.",
+    "chapterCount": 15,
+    "coverUrl": "./covers/kota-algoritma.png",
+    "emoji": null
+  },
+  {
+    "slug": "faith-and-beats",
+    "title": "Faith and Beats",
+    "order": 2,
+    "genre": ["Religi", "Drama Musik", "Romance"],
+    "role": "Prequel",
+    "blurb": "Nisa & Reza jatuh cinta diam-diam; Reza jadi mualaf; mereka menikah.",
+    "chapterCount": 17,
+    "coverUrl": "./covers/faith-and-beats.png",
+    "emoji": null
+  },
+  {
+    "slug": "ketukan-menuju-istana",
+    "title": "Ketukan Menuju Istana",
+    "order": 3,
+    "genre": ["Romance", "Drama Musik", "Drama Politik"],
+    "role": "Jembatan",
+    "blurb": "Dari duo DJ menjadi presiden: 19 tahun perjalanan, trauma, Tur Nusantara Bersuara, kemenangan.",
+    "chapterCount": 26,
+    "coverUrl": "./covers/ketukan-menuju-istana.png",
+    "emoji": null
+  },
+  {
+    "slug": "nur-ai",
+    "title": "Nur AI",
+    "order": 4,
+    "genre": ["Religi", "Drama"],
+    "role": "Spin-off",
+    "blurb": "Alex remaja bergulat dengan keyakinan lewat aplikasi AI bernama Nur.",
+    "chapterCount": 13,
+    "coverUrl": "./covers/nur-ai.png",
+    "emoji": null
+  },
+  {
+    "slug": "istana-penuh-bara",
+    "title": "Istana Penuh Bara",
+    "order": 5,
+    "genre": ["Drama Politik", "Drama Keluarga"],
+    "role": "Jalur Utama · Titik Cabang #1",
+    "blurb": "Nisa baru dilantik; pertaruhan besar pertama, UU Kesiapan Berkeluarga.",
+    "chapterCount": 25,
+    "coverUrl": "./covers/istana-penuh-bara.png",
+    "emoji": null
+  },
+  {
+    "slug": "the-corrs-liburan-di-indonesia",
+    "title": "The Corrs Liburan di Indonesia",
+    "order": 6,
+    "genre": ["Drama Musik", "Drama Keluarga"],
+    "role": "Spin-off",
+    "blurb": "Kejutan ulang tahun berubah jadi kunjungan kerja & penghargaan budaya.",
+    "chapterCount": 24,
+    "coverUrl": "./covers/the-corrs-liburan-di-indonesia.png",
+    "emoji": null
+  },
+  {
+    "slug": "curhat-cinta-istana",
+    "title": "Curhat Cinta Istana",
+    "order": 7,
+    "genre": ["Drama Keluarga", "Romance"],
+    "role": "Cabang B",
+    "blurb": "Jalur alternatif: UU gagal, Nisa dan Reza berbagi nilai lewat podcast keluarga.",
+    "chapterCount": 32,
+    "coverUrl": "./covers/curhat-cinta-istana.png",
+    "emoji": null
+  },
+  {
+    "slug": "istana-fyp",
+    "title": "Istana FYP",
+    "order": 7,
+    "genre": ["Drama Politik", "Thriller Politik"],
+    "role": "Cabang A",
+    "blurb": "Ekonomi kreatif, Satgas Saber Peradilan, tekanan bisnis mulai menyasar Reza Satria Group.",
+    "chapterCount": 14,
+    "coverUrl": "./covers/istana-fyp.png",
+    "emoji": null
+  },
+  {
+    "slug": "bayang-bayang-kematian",
+    "title": "Bayang-Bayang Kematian di Kursi Nomor Satu",
+    "order": 8,
+    "genre": ["Thriller Politik", "Drama Keluarga"],
+    "role": "Cabang A · Titik Cabang #2",
+    "blurb": "Krisis terbesar; konspirasi dan penculikan menguji segalanya.",
+    "chapterCount": 25,
+    "coverUrl": "./covers/bayang-bayang-kematian.png",
+    "emoji": null
+  },
+  {
+    "slug": "dokter-cinta-dunia",
+    "title": "Dokter Cinta Dunia",
+    "order": 9,
+    "genre": ["Romance", "Drama Keluarga"],
+    "role": "Cabang A2",
+    "blurb": "Nisa purnatugas, Nisa dan Reza membangun Yayasan Cinta Merdeka Global ke panggung dunia.",
+    "chapterCount": 9,
+    "coverUrl": "./covers/dokter-cinta-dunia.png",
+    "emoji": null
+  },
+  {
+    "slug": "ketika-langit-tak-lagi-batasnya",
+    "title": "Ketika Langit Tak Lagi Batasnya...",
+    "order": 10,
+    "genre": ["Drama Musik", "Romance"],
+    "role": "Spin-off",
+    "blurb": "Karya fiksi tentang skandal masa lalu sang artis dan cinta beda usia jauh yang ditulis Nisa sendiri di masa purnatugas.",
+    "chapterCount": 16,
+    "coverUrl": "./covers/ketika-langit-tak-lagi-batasnya.png",
+    "emoji": null
+  },
+  {
+    "slug": "terukir-sebelum-terjadi",
+    "title": "Terukir sebelum Terjadi",
+    "order": 10,
+    "genre": ["Drama", "Religi"],
+    "role": "Spin-off",
+    "blurb": "Enam kehidupan terhubung takdir, terinspirasi Al-Hadid ayat 22.",
+    "chapterCount": 16,
+    "coverUrl": "./covers/terukir-sebelum-terjadi.png",
+    "emoji": null
+  }
+]

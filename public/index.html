@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&amp;family=Work+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+:root { --bg-page:#0f1216; --bg-header:rgba(15,18,22,0.72); --wash-a:oklch(0.22 0.09 25 / 0.5); --wash-b:oklch(0.2 0.09 250 / 0.45); --wash-a-size:65% 50%; --text:#eef1f3; --secondary:#c4cbd1; --muted:#8b96a1; --muted2:#5c6670; --border:#262d35; --card:#151a20; --reader-text:#dfe4e8; }
+body { margin:0; background:var(--bg-page); }
+::selection { background: oklch(0.72 0.15 165 / 0.35); }
+a { color: oklch(0.72 0.15 165); text-decoration:none; }
+a:hover { color: oklch(0.82 0.13 165); }
+</style>
+</helmet>
+<div style="min-height:100vh; background:radial-gradient(ellipse var(--wash-a-size) at 0% 0%, var(--wash-a), transparent 55%), radial-gradient(ellipse 65% 50% at 100% 100%, var(--wash-b), transparent 55%), var(--bg-page); color:var(--text); font-family:'Work Sans',sans-serif;">
+
+  <div style="position:sticky; top:0; z-index:10; display:flex; align-items:center; justify-content:space-between; padding:18px 40px; background:var(--bg-header); backdrop-filter:blur(8px); border-bottom:1px solid var(--border);">
+    <div style="font-family:'Chakra Petch',sans-serif; font-weight:700; font-size:19px; letter-spacing:0.5px; cursor:pointer;" onClick="{{ goHome }}">PERPUSTAKAAN NISA</div>
+    <div style="display:flex; align-items:center; gap:28px; font-family:'Chakra Petch',sans-serif; font-size:13px; letter-spacing:0.8px;">
+      <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}"><span style="cursor:pointer; color:oklch(0.72 0.15 165);">{{ t.home }}</span></sc-if>
+      <sc-if value="{{ isNotHome }}" hint-placeholder-val="{{ false }}"><span style="cursor:pointer; color:var(--muted);" onClick="{{ goHome }}">{{ t.home }}</span></sc-if>
+      <a href="#rumahmu" style="cursor:pointer; color:var(--muted);">{{ t.rumahmu }}</a>
+      <button style="background:var(--card); border:1px solid var(--border); color:var(--muted2); font-family:monospace; font-size:12px; padding:5px 9px; border-radius:3px; cursor:pointer;" onClick="{{ toggleTheme }}" title="{{ t.themeToggleTitle }}">{{ themeIcon }}</button>
+      <button style="background:var(--card); border:1px solid var(--border); color:var(--secondary); font-family:monospace; font-size:12px; padding:5px 10px; border-radius:3px; cursor:pointer; letter-spacing:0.5px;" onClick="{{ toggleLang }}">{{ langLabel }}</button>
+    </div>
+  </div>
+
+  <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+    <div style="max-width:1180px; margin:0 auto; padding:56px 40px 100px;">
+      <div style="margin-bottom:44px; max-width:600px;">
+        <div style="font-family:'Chakra Petch',sans-serif; font-size:13px; letter-spacing:2px; color:oklch(0.72 0.15 165); margin-bottom:14px;">{{ t.kicker }}</div>
+        <h1 style="font-family:'Chakra Petch',sans-serif; font-size:46px; font-weight:700; margin:0 0 14px; line-height:1.12;">Perpustakaan Nisa</h1>
+        <p style="font-size:16px; color:var(--muted); line-height:1.65; margin:0 0 22px;">{{ t.tagline }}</p>
+        <a href="#peta-semesta" style="display:inline-block; background:oklch(0.72 0.15 165); color:#0f1216; font-family:'Chakra Petch',sans-serif; font-weight:600; font-size:14px; padding:12px 22px; border-radius:3px; letter-spacing:0.3px;">{{ t.viewMap }}</a>
+      </div>
+
+      <div id="peta-semesta" style="margin:0 -40px 56px; padding:52px 40px 0; border-top:1px solid var(--border);">
+      <div style="font-family:'Chakra Petch',sans-serif; font-size:13px; letter-spacing:2px; color:oklch(0.72 0.15 165); margin-bottom:14px; text-align:center;">{{ t.readingGuide }}</div>
+      <h2 style="font-family:'Chakra Petch',sans-serif; font-size:34px; font-weight:700; margin:0 0 16px; text-align:center;">{{ t.treeTitle }}</h2>
+      <p style="font-size:15px; color:var(--muted); line-height:1.7; max-width:560px; margin:0 auto 28px; text-align:center;">{{ t.treeSub }}</p>
+
+      <div style="max-width:680px; margin:0 auto 56px; padding:22px 26px; background:var(--card); border:1px solid oklch(0.4 0.08 165); border-radius:6px;">
+        <div style="font-family:'Chakra Petch',sans-serif; font-size:14px; font-weight:700; color:oklch(0.82 0.06 165); margin-bottom:10px;">{{ t.centerTitle }}</div>
+        <p style="font-size:13.5px; color:var(--secondary); line-height:1.7; margin:0;">{{ t.centerBody }}</p>
+      </div>
+
+      <div style="overflow-x:auto; padding-bottom:20px;">
+      <div style="min-width:920px; display:flex; flex-direction:column; align-items:center;">
+
+        <div style="padding:16px 22px; background:var(--card); border:1px solid oklch(0.85 0.18 95); border-radius:6px; cursor:pointer; min-width:220px; text-align:center;" onClick="{{ nKA.onOpen }}">
+          <div style="font-family:'Chakra Petch',sans-serif; font-size:15px; font-weight:600;">{{ nKA.title }}</div>
+          <div style="font-size:11.5px; color:var(--muted); margin-top:3px;">{{ nKA.sub }}</div>
+        </div>
+        <div style="display:flex; flex-direction:column; align-items:center;">
+          <div style="width:1px; height:26px; border-left:2px dashed #3a4048;"></div>
+          <div style="font-family:monospace; font-size:10.5px; color:var(--muted2); margin-bottom:2px;">{{ t.thematic }}</div>
+        </div>
+
+        <div id="nodeFB" style="display:flex; flex-direction:column; align-items:center; padding:16px 22px; background:var(--card); border:1px solid oklch(0.85 0.18 95); border-radius:6px; cursor:pointer; min-width:220px; text-align:center;" onClick="{{ nFB.onOpen }}">
+          <div style="font-family:'Chakra Petch',sans-serif; font-size:15px; font-weight:600;">{{ nFB.title }}</div>
+          <div style="font-size:11.5px; color:var(--muted); margin-top:3px;">{{ nFB.sub }}</div>
+        </div>
+        <div style="width:2px; height:26px; background:#3a4048;"></div>
+        <div style="padding:16px 22px; background:oklch(0.24 0.05 165); border:2px solid oklch(0.72 0.15 165); border-radius:6px; cursor:pointer; min-width:220px; text-align:center;" onClick="{{ nKMI.onOpen }}">
+          <div style="font-family:'Chakra Petch',sans-serif; font-size:15px; font-weight:600; color:#eef1f3;">{{ nKMI.title }}</div>
+          <div style="font-size:11.5px; color:oklch(0.85 0.06 165); margin-top:3px;">{{ nKMI.sub }}</div>
+        </div>
+        <div style="width:2px; height:26px; background:#3a4048;"></div>
+        <div style="padding:16px 22px; background:var(--card); border:1px solid oklch(0.85 0.18 95); border-radius:6px; cursor:pointer; min-width:220px; text-align:center;" onClick="{{ nNUR.onOpen }}">
+          <div style="font-family:'Chakra Petch',sans-serif; font-size:15px; font-weight:600;">{{ nNUR.title }}</div>
+          <div style="font-size:11.5px; color:var(--muted); margin-top:3px;">{{ nNUR.sub }}</div>
+        </div>
+        <div style="width:2px; height:26px; background:#3a4048;"></div>
+
+        <div style="padding:20px 28px; background:oklch(0.24 0.05 165); border:2px solid oklch(0.72 0.15 165); border-radius:6px; cursor:pointer; min-width:260px; text-align:center;" onClick="{{ nIPB.onOpen }}">
+          <div style="font-family:'Chakra Petch',sans-serif; font-size:17px; font-weight:700; color:#eef1f3;">{{ nIPB.title }}</div>
+          <div style="font-size:12px; color:oklch(0.85 0.06 165); margin-top:4px; font-family:monospace;">{{ t.mainBranch }}</div>
+        </div>
+
+        <div style="position:relative; width:100%; max-width:900px; margin-top:26px;">
+          <div style="position:absolute; left:50%; top:-26px; width:2px; height:26px; background:#3a4048; transform:translateX(-50%);"></div>
+          <div style="height:2px; background:#3a4048; width:100%;"></div>
+          <div style="display:flex; justify-content:space-between;">
+            <div style="width:2px; height:24px; background:#3a4048; margin-left:6%;"></div>
+            <div style="width:2px; height:24px; background:#3a4048;"></div>
+            <div style="width:2px; height:24px; background:#3a4048; margin-right:6%;"></div>
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; width:100%; max-width:900px; align-items:flex-start; gap:16px;">
+
+          <div style="flex:0 0 auto; margin-left:2%;">
+            <div style="padding:14px 18px; background:var(--card); border:1px solid var(--border); border-radius:6px; cursor:pointer; min-width:190px; text-align:center;" onClick="{{ nCORRS.onOpen }}">
+              <div style="font-family:'Chakra Petch',sans-serif; font-size:13.5px; font-weight:600;">{{ nCORRS.title }}</div>
+              <div style="font-size:11px; color:var(--muted); margin-top:3px;">{{ nCORRS.sub }}</div>
+            </div>
+          </div>
+
+          <div style="flex:1 1 0; display:flex; flex-direction:column; align-items:center; gap:0;">
+            <div style="font-family:'Chakra Petch',sans-serif; font-size:12.5px; font-weight:600; color:oklch(0.68 0.16 25); letter-spacing:0.5px; margin-bottom:12px;">{{ t.branchA }}</div>
+            <div style="padding:14px 18px; background:#1c1417; border:1px solid oklch(0.35 0.1 25); border-radius:6px; cursor:pointer; min-width:200px; text-align:center;" onClick="{{ nFYP.onOpen }}">
+              <div style="font-family:'Chakra Petch',sans-serif; font-size:13.5px; font-weight:600; color:#eef1f3;">{{ nFYP.title }}</div>
+              <div style="font-size:10.5px; color:#9aa3ab; margin-top:3px;">{{ nFYP.sub }}</div>
+            </div>
+            <div style="width:2px; height:22px; background:oklch(0.4 0.1 25);"></div>
+            <div style="padding:14px 18px; background:oklch(0.2 0.06 25); border:2px solid oklch(0.6 0.18 25); border-radius:6px; cursor:pointer; min-width:200px; text-align:center;" onClick="{{ nBBK.onOpen }}">
+              <div style="font-family:'Chakra Petch',sans-serif; font-size:13.5px; font-weight:600; color:#eef1f3;">{{ nBBK.title }}</div>
+              <div style="font-size:10.5px; color:oklch(0.75 0.12 25); margin-top:3px; font-family:monospace;">{{ t.branchPoint2 }}</div>
+              <div style="font-size:10.5px; color:#c4a3a3; margin-top:3px;">{{ nBBK.sub }}</div>
+            </div>
+            <div style="display:flex; align-items:flex-start; gap:14px; margin-top:22px;">
+              <div style="display:flex; flex-direction:column; align-items:center;">
+                <div style="width:2px; height:20px; background:oklch(0.4 0.1 25);"></div>
+                <div style="padding:10px 14px; background:oklch(0.2 0.06 25); border:1px solid oklch(0.4 0.1 25); border-radius:6px; cursor:pointer; min-width:150px; text-align:center;" onClick="{{ nA2.onOpen }}">
+                  <div style="font-family:'Chakra Petch',sans-serif; font-size:12.5px; font-weight:600; color:#eef1f3;">{{ nA2.title }}</div>
+                  <div style="font-size:10px; color:#9aa3ab; margin-top:2px;">{{ nA2.sub }}</div>
+                </div>
+                <div style="display:flex; gap:10px; margin-top:16px;">
+                  <div style="display:flex; flex-direction:column; align-items:center;">
+                    <div style="width:2px; height:16px; background:oklch(0.4 0.1 25);"></div>
+                    <div style="padding:8px 12px; background:var(--card); border:1px solid var(--border); border-radius:5px; cursor:pointer; min-width:120px; text-align:center;" onClick="{{ nKL.onOpen }}">
+                      <div style="font-family:'Chakra Petch',sans-serif; font-size:11.5px; font-weight:600;">{{ nKL.title }}</div>
+                      <div style="font-size:9.5px; color:var(--muted); margin-top:2px;">{{ nKL.sub }}</div>
+                    </div>
+                  </div>
+                  <div style="display:flex; flex-direction:column; align-items:center;">
+                    <div style="width:2px; height:16px; background:oklch(0.4 0.1 25);"></div>
+                    <div style="padding:8px 12px; background:var(--card); border:1px solid var(--border); border-radius:5px; cursor:pointer; min-width:120px; text-align:center;" onClick="{{ nTST.onOpen }}">
+                      <div style="font-family:'Chakra Petch',sans-serif; font-size:11.5px; font-weight:600;">{{ nTST.title }}</div>
+                      <div style="font-size:9.5px; color:var(--muted); margin-top:2px;">{{ nTST.sub }}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style="flex:0 0 auto; margin-right:2%;">
+            <div style="font-family:'Chakra Petch',sans-serif; font-size:12.5px; font-weight:600; color:oklch(0.68 0.14 250); letter-spacing:0.5px; margin-bottom:12px; text-align:center;">{{ t.branchB }}</div>
+            <div style="padding:14px 18px; background:oklch(0.2 0.05 250); border:1px solid oklch(0.4 0.1 250); border-radius:6px; cursor:pointer; min-width:200px; text-align:center;" onClick="{{ nCCI.onOpen }}">
+              <div style="font-family:'Chakra Petch',sans-serif; font-size:13.5px; font-weight:600; color:#eef1f3;">{{ nCCI.title }}</div>
+              <div style="font-size:10.5px; color:#9aa3ab; margin-top:3px;">{{ nCCI.sub }}</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      </div>
+
+      <div style="margin-top:64px; padding-top:32px; border-top:1px dashed var(--border);">
+        <div style="font-family:'Chakra Petch',sans-serif; font-size:14px; letter-spacing:1px; color:var(--muted); margin-bottom:20px;">{{ t.novelSummaries }}</div>
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <sc-for list="{{ summaryList }}" as="sm" hint-placeholder-count="6">
+            <div style="display:flex; gap:14px; align-items:baseline; cursor:pointer;" onClick="{{ sm.onOpen }}">
+              <div style="font-family:monospace; font-size:12px; color:oklch(0.72 0.15 165); min-width:20px;">{{ sm.num }}.</div>
+              <div style="font-size:13.5px; color:var(--secondary); line-height:1.6;">
+                <strong style="color:var(--text);">{{ sm.title }}</strong>
+                <sc-if value="{{ sm.hasReza }}" hint-placeholder-val="{{ false }}"><span> &#128158;</span></sc-if>
+                <span> &mdash; {{ sm.blurb }}</span>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="font-size:12px; color:var(--muted2); margin-top:16px; line-height:1.6;">{{ t.footnote }}</div>
+      </div>
+      </div>
+
+      <div id="rumahmu" style="padding-top:20px;"></div>
+      <sc-if value="{{ hasContinue }}" hint-placeholder-val="{{ false }}">
+        <div style="margin-bottom:40px;">
+          <div style="font-family:'Chakra Petch',sans-serif; font-size:14px; letter-spacing:0.5px; color:var(--muted); margin-bottom:14px;">{{ t.continueReading }}</div>
+          <div style="display:flex; gap:16px; overflow-x:auto; padding-bottom:6px;">
+            <sc-for list="{{ continueReading }}" as="cr" hint-placeholder-count="3">
+              <div style="flex:0 0 160px; cursor:pointer;" onClick="{{ cr.onOpen }}">
+                <img src="{{ cr.coverUrl }}" alt="{{ cr.title }}" style="width:100%; aspect-ratio:2/3; object-fit:cover; border:1px solid var(--border); border-radius:4px; display:block;" />
+                <div style="font-family:'Chakra Petch',sans-serif; font-size:13px; font-weight:600; margin-top:8px;">{{ cr.title }}</div>
+                <div style="font-size:11.5px; color:oklch(0.72 0.15 165); font-family:monospace;">{{ cr.chapterLabel }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ hasBookmarks }}" hint-placeholder-val="{{ false }}">
+        <div style="margin-bottom:40px;">
+          <div style="font-family:'Chakra Petch',sans-serif; font-size:14px; letter-spacing:0.5px; color:var(--muted); margin-bottom:14px;">{{ t.saved }}</div>
+          <div style="display:flex; gap:16px; overflow-x:auto; padding-bottom:6px;">
+            <sc-for list="{{ bookmarked }}" as="bk" hint-placeholder-count="3">
+              <div style="flex:0 0 160px; cursor:pointer;" onClick="{{ bk.onOpen }}">
+                <img src="{{ bk.coverUrl }}" alt="{{ bk.title }}" style="width:100%; aspect-ratio:2/3; object-fit:cover; border:1px solid var(--border); border-radius:4px; display:block;" />
+                <div style="font-family:'Chakra Petch',sans-serif; font-size:13px; font-weight:600; margin-top:8px;">{{ bk.title }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <div style="position:relative; max-width:420px; margin-bottom:20px;">
+        <input type="text" value="{{ searchQuery }}" onChange="{{ onSearchChange }}" placeholder="{{ t.searchPlaceholder }}" style="width:100%; box-sizing:border-box; background:var(--card); border:1px solid var(--border); color:var(--text); font-family:'Work Sans',sans-serif; font-size:14px; padding:11px 14px; border-radius:6px; outline:none;" />
+        <sc-if value="{{ hasSearch }}" hint-placeholder-val="{{ false }}">
+          <span style="position:absolute; right:12px; top:50%; transform:translateY(-50%); cursor:pointer; color:var(--muted); font-family:monospace; font-size:13px;" onClick="{{ clearSearch }}">&times;</span>
+        </sc-if>
+      </div>
+
+      <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:36px;">
+        <sc-if value="{{ hasFilter }}" hint-placeholder-val="{{ false }}">
+          <button style="background:var(--card); border:1px solid var(--border); color:var(--muted); font-family:'Chakra Petch',sans-serif; font-size:13px; padding:8px 16px; border-radius:20px; cursor:pointer;" onClick="{{ clearFilter }}">{{ t.all }}</button>
+        </sc-if>
+        <sc-if value="{{ hasFilterNot }}" hint-placeholder-val="{{ true }}">
+          <button style="background:oklch(0.28 0.05 165); border:1px solid oklch(0.72 0.15 165); color:oklch(0.9 0.04 165); font-family:'Chakra Petch',sans-serif; font-size:13px; padding:8px 16px; border-radius:20px; cursor:pointer;">{{ t.all }}</button>
+        </sc-if>
+        <sc-for list="{{ genreChips }}" as="g" hint-placeholder-count="6">
+          <sc-if value="{{ g.active }}" hint-placeholder-val="{{ false }}">
+            <button style="background:oklch(0.28 0.05 165); border:1px solid oklch(0.72 0.15 165); color:oklch(0.9 0.04 165); font-family:'Chakra Petch',sans-serif; font-size:13px; padding:8px 16px; border-radius:20px; cursor:pointer;" onClick="{{ g.onClick }}">{{ g.name }}</button>
+          </sc-if>
+          <sc-if value="{{ g.inactive }}" hint-placeholder-val="{{ true }}">
+            <button style="background:var(--card); border:1px solid var(--border); color:var(--muted); font-family:'Chakra Petch',sans-serif; font-size:13px; padding:8px 16px; border-radius:20px; cursor:pointer;" onClick="{{ g.onClick }}">{{ g.name }}</button>
+          </sc-if>
+        </sc-for>
+      </div>
+
+      <sc-if value="{{ hasNoResults }}" hint-placeholder-val="{{ false }}">
+        <div style="color:var(--muted2); font-family:monospace; font-size:13px; padding:20px 0;">{{ t.noResults }}</div>
+      </sc-if>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:30px;">
+        <sc-for list="{{ filtered }}" as="n" hint-placeholder-count="6">
+          <div style="cursor:pointer;" onClick="{{ n.onOpen }}">
+            <img src="{{ n.coverUrl }}" alt="{{ n.title }}" style="width:100%; aspect-ratio:2/3; object-fit:cover; border:1px solid var(--border); border-radius:4px; display:block;" />
+            <div style="margin-top:14px;">
+              <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:8px;">
+                <sc-for list="{{ n.genre }}" as="g2" hint-placeholder-count="2">
+                  <span style="font-size:10px; padding:3px 9px; border-radius:3px; background:oklch(0.24 0.045 165); color:oklch(0.82 0.05 165); font-family:'Chakra Petch',sans-serif; letter-spacing:0.3px;">{{ g2 }}</span>
+                </sc-for>
+              </div>
+              <div style="font-size:13.5px; color:var(--muted); line-height:1.55; margin-bottom:8px;">{{ n.blurb }}</div>
+              <div style="font-size:11.5px; color:var(--muted2); font-family:monospace;">{{ n.chapterLabel }}</div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isNovel }}" hint-placeholder-val="{{ false }}">
+    <div style="max-width:960px; margin:0 auto; padding:44px 40px 100px;">
+      <div style="font-family:'Chakra Petch',sans-serif; font-size:13px; color:var(--muted); cursor:pointer; margin-bottom:28px;" onClick="{{ goHome }}">&larr; {{ t.home }}</div>
+      <div style="display:grid; grid-template-columns:260px 1fr; gap:40px;">
+        <img src="{{ novelMeta.coverUrl }}" alt="{{ novelMeta.title }}" style="width:100%; aspect-ratio:2/3; object-fit:cover; border:1px solid var(--border); border-radius:4px; display:block;" />
+        <div>
+          <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px;">
+            <sc-for list="{{ novelMeta.genre }}" as="g3" hint-placeholder-count="2">
+              <span style="font-size:11px; padding:4px 10px; border-radius:3px; background:oklch(0.24 0.045 165); color:oklch(0.82 0.05 165); font-family:'Chakra Petch',sans-serif; letter-spacing:0.3px;">{{ g3 }}</span>
+            </sc-for>
+          </div>
+          <h1 style="font-family:'Chakra Petch',sans-serif; font-size:34px; font-weight:700; margin:0 0 6px; line-height:1.15;">{{ novelMeta.title }}</h1>
+          <div style="font-size:14px; color:var(--muted); margin-bottom:18px;">{{ t.byAuthor }}</div>
+          <sc-if value="{{ showBadges }}" hint-placeholder-val="{{ true }}">
+            <div style="display:inline-block; font-family:monospace; font-size:12px; color:oklch(0.72 0.15 165); border:1px solid oklch(0.32 0.08 165); border-radius:3px; padding:5px 10px; margin-bottom:16px;">{{ novelMeta.role }}</div>
+          </sc-if>
+          <p style="font-size:15px; color:var(--secondary); line-height:1.7; margin:0 0 16px;">{{ novelMeta.synopsis }}</p>
+          <div style="font-size:13px; color:var(--muted2); font-family:monospace; margin-bottom:24px;">{{ novelMeta.chapterWordLabel }}</div>
+          <div style="display:flex; gap:10px;">
+            <button style="background:oklch(0.72 0.15 165); color:#0f1216; font-family:'Chakra Petch',sans-serif; font-weight:600; font-size:14px; padding:12px 24px; border:none; border-radius:3px; cursor:pointer; letter-spacing:0.3px;" onClick="{{ startReadFirst }}">{{ t.startReading }}</button>
+            <sc-if value="{{ isBookmarked }}" hint-placeholder-val="{{ false }}">
+              <button style="background:transparent; color:oklch(0.72 0.15 165); border:1px solid oklch(0.72 0.15 165); font-family:'Chakra Petch',sans-serif; font-weight:600; font-size:14px; padding:12px 20px; border-radius:3px; cursor:pointer;" onClick="{{ toggleBookmark }}">{{ t.savedBtn }}</button>
+            </sc-if>
+            <sc-if value="{{ isBookmarkedNot }}" hint-placeholder-val="{{ true }}">
+              <button style="background:transparent; color:var(--muted); border:1px solid var(--border); font-family:'Chakra Petch',sans-serif; font-weight:600; font-size:14px; padding:12px 20px; border-radius:3px; cursor:pointer;" onClick="{{ toggleBookmark }}">{{ t.saveBtn }}</button>
+            </sc-if>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:48px;">
+        <div style="font-family:'Chakra Petch',sans-serif; font-size:14px; letter-spacing:0.5px; color:var(--muted); margin-bottom:16px;">{{ t.chapterList }}</div>
+        <sc-if value="{{ novelLoading }}" hint-placeholder-val="{{ false }}">
+          <div style="color:var(--muted2); font-family:monospace; font-size:13px;">{{ t.loadingManuscript }}</div>
+        </sc-if>
+        <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:8px;">
+          <sc-for list="{{ chapters }}" as="c" hint-placeholder-count="8">
+            <div style="display:flex; gap:10px; align-items:baseline; padding:10px 14px; background:var(--card); border:1px solid var(--border); border-radius:3px; cursor:pointer;" onClick="{{ c.onOpen }}">
+              <span style="font-family:monospace; font-size:12px; color:oklch(0.72 0.15 165); min-width:22px;">{{ c.number }}</span>
+              <span style="font-size:13.5px; color:var(--secondary);">{{ c.heading }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isReader }}" hint-placeholder-val="{{ false }}">
+    <div style="max-width:700px; margin:0 auto; padding:44px 40px 120px;">
+      <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px;">
+        <div style="font-family:'Chakra Petch',sans-serif; font-size:13px; color:var(--muted); cursor:pointer;" onClick="{{ backToNovel }}">&larr; {{ novelMeta.title }}</div>
+        <div style="font-family:monospace; font-size:12px; color:var(--muted2);">{{ t.chapterOf }}</div>
+      </div>
+      <sc-if value="{{ chapterReady }}" hint-placeholder-val="{{ false }}">
+        <h2 style="font-family:'Chakra Petch',sans-serif; font-size:26px; font-weight:700; margin:24px 0 32px;">{{ chapterLabelLine }}: {{ chapter.heading }}</h2>
+        <sc-if value="{{ isSerifFont }}" hint-placeholder-val="{{ false }}">
+          <sc-for list="{{ chapter.paragraphs }}" as="p" hint-placeholder-count="6">
+            <p style="margin:0 0 20px; font-size:18px; line-height:1.85; color:var(--reader-text); font-family:Georgia,serif;">{{ p }}</p>
+          </sc-for>
+        </sc-if>
+        <sc-if value="{{ isSansFont }}" hint-placeholder-val="{{ true }}">
+          <sc-for list="{{ chapter.paragraphs }}" as="p2" hint-placeholder-count="6">
+            <p style="margin:0 0 20px; font-size:17px; line-height:1.85; color:var(--reader-text); font-family:'Work Sans',sans-serif;">{{ p2 }}</p>
+          </sc-for>
+        </sc-if>
+      </sc-if>
+      <sc-if value="{{ chapterNotReady }}" hint-placeholder-val="{{ true }}">
+        <div style="color:var(--muted2); font-family:monospace; font-size:13px; padding:40px 0;">{{ t.loadingChapter }}</div>
+      </sc-if>
+
+      <sc-if value="{{ isTranslated }}" hint-placeholder-val="{{ false }}">
+        <div style="margin-top:16px; padding:12px 16px; background:var(--card); border:1px solid var(--border); border-radius:4px; font-size:12.5px; color:var(--muted); line-height:1.6;">{{ t.chapterNotice }}</div>
+      </sc-if>
+
+      <div style="display:flex; justify-content:space-between; margin-top:56px; padding-top:24px; border-top:1px solid var(--border);">
+        <sc-if value="{{ hasPrev }}" hint-placeholder-val="{{ false }}">
+          <button style="background:transparent; border:1px solid var(--border); color:var(--text); font-family:'Chakra Petch',sans-serif; font-size:13px; padding:10px 18px; border-radius:3px; cursor:pointer;" onClick="{{ prevChapter }}">{{ t.prevChapter }}</button>
+        </sc-if>
+        <sc-if value="{{ hasPrevNot }}" hint-placeholder-val="{{ true }}"><span></span></sc-if>
+        <sc-if value="{{ hasNext }}" hint-placeholder-val="{{ false }}">
+          <button style="background:oklch(0.72 0.15 165); color:#0f1216; font-family:'Chakra Petch',sans-serif; font-weight:600; font-size:13px; padding:10px 18px; border:none; border-radius:3px; cursor:pointer;" onClick="{{ nextChapter }}">{{ t.nextChapter }}</button>
+        </sc-if>
+      </div>
+
+      <div id="engagement-root" data-slug="{{ selectedSlug }}" data-chapter="{{ chapterNum }}"></div>
+    </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;readingFont&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;Sans-serif&quot;,&quot;options&quot;:[&quot;Sans-serif&quot;,&quot;Serif&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Reader&quot;},&quot;showUniverseBadges&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Universe&quot;}}">
+const UI = {
+  id: {
+    home:"BERANDA", universe:"PETA SEMESTA", kicker:"12 NOVEL · SATU SEMESTA",
+    tagline:"Kisah Presiden Nisa Farha — dari perjalanan menuju kursi kepresidenan, pertaruhan besar di Istana, hingga percabangan takdir setelah satu keputusan penting.",
+    viewMap:"Lihat Peta Semesta →", continueReading:"LANJUTKAN MEMBACA", saved:"TERSIMPAN", all:"Semua",
+    byAuthor:"oleh Nisa", startReading:"Mulai Baca", savedBtn:"★ Tersimpan", saveBtn:"☆ Simpan",
+    chapterList:"DAFTAR BAB", loadingManuscript:"memuat naskah…", loadingChapter:"memuat bab…",
+    prevChapter:"← Bab Sebelumnya", nextChapter:"Bab Selanjutnya →",
+    readingGuide:"PANDUAN BACA", treeTitle:"Pohon Alur — Semesta Presiden Nisa",
+    treeSub:"Geser layar kalau diagramnya lebar. Klik kartu untuk membaca novelnya.",
+    centerTitle:"Titik Pusat Semesta",
+    centerBody:"Istana Penuh Bara adalah pedoman dan titik pusat dari seluruh semesta ini — cerita tentang Nisa sekarang, sebagai presiden yang sedang menjabat. Novel-novel lain adalah materi pendukung yang mengorbit di sekitarnya: prequel menjelaskan bagaimana Nisa sampai ke titik ini, sedangkan Cabang A/B dan spin-offnya menjelaskan ke mana cerita melangkah setelahnya.",
+    thematic:"pengaruh tematik", mainBranch:"JALUR UTAMA · TITIK CABANG 1",
+    branchA:"CABANG A · UU LOLOS", branchB:"CABANG B · UU GAGAL", branchPoint2:"TITIK CABANG 2",
+    novelSummaries:"RINGKASAN TIAP NOVEL",
+    footnote:"💞 = novel dengan Reza, suami Presiden Nisa, turut hadir dan banyak terlibat (bukan sekadar disebut, tapi juga bagian sentral cerita)",
+    chapterNotice:"Teks bab ditampilkan dalam Bahasa Indonesia asli — terjemahan penuh belum tersedia.",
+    searchPlaceholder:"Cari judul, genre, atau isi cerita…", noResults:"Tidak ada novel yang cocok.",
+    themeToggleTitle:"Ganti mode terang/gelap", rumahmu:"RUMAHMU",
+  },
+  en: {
+    home:"HOME", universe:"UNIVERSE MAP", kicker:"12 NOVELS · ONE UNIVERSE",
+    tagline:"The story of President Nisa Farha — from her journey to the presidency, through a major gamble at the Palace, to the branching fates that follow one crucial decision.",
+    viewMap:"View the Universe Map →", continueReading:"CONTINUE READING", saved:"SAVED", all:"All",
+    byAuthor:"by Nisa", startReading:"Start Reading", savedBtn:"★ Saved", saveBtn:"☆ Save",
+    chapterList:"CHAPTER LIST", loadingManuscript:"loading manuscript…", loadingChapter:"loading chapter…",
+    prevChapter:"← Previous Chapter", nextChapter:"Next Chapter →",
+    readingGuide:"READING GUIDE", treeTitle:"Story Tree — The President Nisa Universe",
+    treeSub:"Scroll sideways if the diagram runs wide. Click a card to read that novel.",
+    centerTitle:"The Universe's Center Point",
+    centerBody:"Istana Penuh Bara is the anchor and center point of this whole universe — the story of Nisa now, as a sitting president. The other novels are supporting material orbiting around it: the prequels explain how Nisa got here, while Branch A/B and their spin-offs explain where the story goes next.",
+    thematic:"thematic influence", mainBranch:"MAIN PATH · BRANCH POINT 1",
+    branchA:"BRANCH A · BILL PASSES", branchB:"BRANCH B · BILL FAILS", branchPoint2:"BRANCH POINT 2",
+    novelSummaries:"SUMMARY OF EACH NOVEL",
+    footnote:"💞 = a novel where Reza, President Nisa's husband, is present and heavily involved (not just mentioned, but central to the story)",
+    chapterNotice:"Chapter text is shown in the original Indonesian — full translation isn't available yet.",
+    searchPlaceholder:"Search title, genre, or story…", noResults:"No novels match.",
+    themeToggleTitle:"Toggle light/dark mode", rumahmu:"YOUR SHELF",
+  }
+};
+
+const GENRE_EN = {
+  "Fiksi Ilmiah":"Science Fiction", "Religi":"Religious", "Drama Musik":"Music Drama",
+  "Romance":"Romance", "Drama Politik":"Political Drama", "Drama Keluarga":"Family Drama",
+  "Thriller Politik":"Political Thriller", "Drama":"Drama",
+};
+
+const EN_BY_SLUG = {
+  "kota-algoritma": { role:"Meta-textual prequel", sub:"AI-run dystopia of love",
+    blurb:"A dystopia where AI controls love; young Nisa's manifesto, echoed later in Istana Penuh Bara and Dokter Cinta Dunia.",
+    synopsis:"Neo-Jakarta breathes to a cold, metronome-precise rhythm of efficiency. Its sky rarely shows natural blue; more often it's veiled by a thin atmospheric filter projecting daily schedules, air-quality indexes, and communal energy data in a controlled palette of pastels. No lazy drifting clouds, no dramatic orange sunsets. Here, even…" },
+  "faith-and-beats": { role:"Prequel", sub:"Prequel · Romance",
+    blurb:"Nisa and Reza fall quietly in love; Reza converts to Islam; they marry.",
+    synopsis:"Dawn breaks over the eastern horizon of Jakarta, sweeping an orange-red glow across a sky still holding the night's last dark. In a softly lit room, Nisa stirs on her bed. She blinks a few times, adjusting to the faint light slipping through the heavy curtains. The cool morning air, typical after rain…" },
+  "ketukan-menuju-istana": { role:"Bridge", sub:"Bridge · 26 chapters",
+    blurb:"From DJ duo to president: 19 years of the journey, trauma, the Nusantara Bersuara tour, and victory.",
+    synopsis:"Reza & Nisa's apartment, South Jakarta — November 2026. A light rain falls outside their twelfth-floor window, blurring the city lights stretching into the distance like scattered, misplaced stars. Inside, the mood is different — warm, dim, lit only by dual monitor screens and soft purple LEDs…" },
+  "nur-ai": { role:"Spin-off", sub:"Spin-off · Teen Alex",
+    blurb:"Teenage Alex wrestles with faith through an AI app named Nur.",
+    synopsis:"Outside, the midday sun bakes the city with typical equatorial intensity. Inside Al-Ikhlas Mosque — or rather its stuffy, packed multipurpose hall — it's no less heated. Not just from the dozens of ceiling fans spinning listlessly, but from the topic burning from the modest pulpit. Alex, a 10th grader…" },
+  "istana-penuh-bara": { role:"Main path · Branch point #1", sub:"",
+    blurb:"Nisa is newly inaugurated; the first major gamble, the Family Readiness Bill.",
+    synopsis:"Istana Negara, Jakarta, October 30, 2044, 10:05 AM. Camera flashes strike relentlessly, like a string of silver fireworks bouncing off the cold marble walls of the Credentials Room. That morning, the room that usually bears silent witness to ambassadors presenting their credentials has been turned into a chaotic impromptu press conference. The air feels thick…" },
+  "the-corrs-liburan-di-indonesia": { role:"Spin-off", sub:"Spin-off",
+    blurb:"A birthday surprise turns into a state visit and cultural honor.",
+    synopsis:"That night, the Jakarta sky seemed to sing along. Not for a state event, but because four siblings from Ireland were playing a hit in the backyard of Istana Negara — at the most improbable birthday party in modern diplomatic history for the President of Indonesia. Andrea Corr still can't believe she's standing on the small garden stage, in front of only about thirty guests…" },
+  "istana-fyp": { role:"Branch A", sub:"Creative economy, business pressure",
+    blurb:"The creative economy, the Saber Peradilan task force, and business pressure closing in on Reza Satria Group.",
+    synopsis:"Istana Negara, Jakarta — a few months after the passage of the Family Readiness Bill (around mid-2045). The Jakarta sky that evening burns crimson, its warm light reflecting off the tall windows of the President's Office. Months have passed since the Speaker's gavel struck in Parliament, passing the bill into law…" },
+  "bayang-bayang-kematian": { role:"Branch A · Branch point #2", sub:"Conspiracy, kidnapping",
+    blurb:"The biggest crisis yet; conspiracy and kidnapping test everything.",
+    synopsis:"The road to Puncak, Bogor. A sleek black sedan glides up the winding uphill road. Outside the window, green tea plantations spread like an emerald carpet, dotted with peaceful villas beneath a slightly overcast sky. A beautiful view that should be calming. But inside the air-conditioned car, the mood is heavy…" },
+  "curhat-cinta-istana": { role:"Branch B", sub:"Nisa's family podcast",
+    blurb:"The alternate path: the bill fails, and Nisa and Reza share their values through a family podcast.",
+    synopsis:"Jakarta's sky in 2044 might look clear blue, an engineering triumph over decades of past pollution. But behind the elegance of Istana Merdeka, President Nisa Farha carries an unease thicker than the capital's old smog. A cup of jasmine tea in the morning has become a rare luxury between cabinet meetings and weighty decisions affecting millions of lives…" },
+  "dokter-cinta-dunia": { role:"Branch A2", sub:"Post-presidency, world stage",
+    blurb:"After leaving office, Nisa and Reza build the Cinta Merdeka Global Foundation onto the world stage.",
+    synopsis:"The Jakarta sky at the end of 2048 stretches clear, a rare sight. As if the universe itself exhales in relief after the storms that battered President Nisa Farha's leadership. Four years have slowly passed since the gavel of justice struck in Parliament, passing the Family Readiness Bill…" },
+  "ketika-langit-tak-lagi-batasnya": { role:"Spin-off", sub:"Nisa's own fiction",
+    blurb:"A work of fiction written by Nisa herself after leaving office.",
+    synopsis:"Embroidered light in purple, blue, and gold bathes the massive stage, illuminating a single figure standing tall at its center. Aruna Candrakirana, in a silver gown hugging her still-toned frame at forty-one, raises her microphone. In that instant, the roar of tens of thousands of fans falls into a tense, anticipatory silence…" },
+  "terukir-sebelum-terjadi": { role:"Spin-off", sub:"Six lives entwined",
+    blurb:"Six lives bound by fate, inspired by Surah Al-Hadid, verse 22.",
+    synopsis:"Kartadipura isn't a big city, but it's busy enough to hold six fates that, without fully realizing it, had already crossed paths long before the storm arrived. Rafi, 28, owns a coffee business that grew from a street cart into a three-branch chain in five years…" },
+};
+
+const EN_TITLE = {
+  "kota-algoritma": "Algorithm City",
+  "faith-and-beats": "Faith and Beats",
+  "ketukan-menuju-istana": "Knocking Towards the Palace",
+  "nur-ai": "Nur AI",
+  "istana-penuh-bara": "Palace Full of Embers",
+  "the-corrs-liburan-di-indonesia": "The Corrs' Holiday in Indonesia",
+  "istana-fyp": "Palace FYP",
+  "bayang-bayang-kematian": "Shadow of Death in the Top Seat",
+  "curhat-cinta-istana": "Palace Heart Talk — Podcast",
+  "dokter-cinta-dunia": "World's Love Doctor",
+  "ketika-langit-tak-lagi-batasnya": "When the Sky Is No Longer the Limit",
+  "terukir-sebelum-terjadi": "Etched Before It Happened",
+};
+
+const EN_HEADINGS = {
+  "kota-algoritma": ["Algorithm City","Forbidden Text","Secret Conversation","Emotion's First Touch","Breaking the Limits of Logic","Eyes Watching","Doubt and Conviction","Nearly Exposed","On the Run","Unexpected Ally","Intimacy as a Weapon","Confrontation at the Heart of the System","Pink Dawn","Building a New Life","The Echo That Remains"],
+  "faith-and-beats": ["Nisa's Double-Life Symphony","Reza's Stage, Nisa's Wait","Unexpected Hum at The Corrs Concert","Same Frequency: EDM Unites","Peeking into Another World","Reza's Curious Notes","Nisa's Inner Turmoil: Love and Fear","Reza Begins to Search: An Intellectual Quest","First Storm: Family Rejection","A Forbidden Moment, Brief Bliss, Deep Regret, and a Shared Secret","Reza's Journey Deepens","Nisa Risks Everything","Reza's Shahada: A Sacred Beginning","Building a Bridge with Family","Marriage: A Blessed Symphony of Two Souls","Faith and Rhythm in a New Life","(Epilogue) Eternal Notes (With New Peace)"],
+  "ketukan-menuju-istana": ["Opening a Long-Locked Door","First Knock to the Public","An Unusual Couple","Peak of the Stage","An Unexpected Beat","The Voice Behind the Cheers","A Buried Dream","A Fire That Can No Longer Be Put Out","The Kept Diploma","Bass for Good","A Trail Beginning to Form","First Investment","Turning Point","Nusantara's First Beat","Faces of Indonesia","Farewell to the Turntable","A Voice Starting to Be Heard","Walls of Power","Attack from the Shadows","Holding Through the Storm","A Strengthening Coalition","Point of No Return","Campaign from the People's Rhythm","Counting Night","The Final Set","(Epilogue) Knocking Towards the Palace"],
+  "nur-ai": ["Restless at the Pulpit","Nur-AI","Light at Your Fingertips","One God, a Million Logics","The Allure of the Qur'an","Microscope and Scripture","Finding Direction at the Crossroads","A Calm Soul, an Open Heart","More Than Just \"Me\"","The Voice of Truth in the Debate Arena","Ripples After the Storm","The Seeker's Peace","A New Dawn of Understanding"],
+  "istana-penuh-bara": ["Gleam of Celebration","Thunder of Wisdom at the Pavilion","Embers Behind the Scenes","A Voice from the Palace","Team on Family Day","Drafting a New Foundation","The Dance That Shook the Internet","The Speech That Set the Party Ablaze","First Storm","Whispers in the Palace Corridor","Battle in Parliament","Pixel Attack","Cracks in the Palace Fortress","Singles' Day and Reflection","Campaign Fund Slander","Anchor in the Dead of Night","A Voice Amid the Storm","The Gavel Falls","Alex's Birthday Party","Healing the Cracks","A Sweet Surprise at the 55th Birthday","Interview After the Storm","New Frequency","Light After the Storm","(Epilogue) Harmony of the Nation"],
+  "the-corrs-liburan-di-indonesia": ["Prologue (Private Birthday Party)","Day 2: Palace Massage and the Mystery of the Non-Exploding Klepon — A Day Full of Question Marks","Day 3: Morning Yoga in Ubud: Grasshopper, Andrea's Mat Buddy — A Meditation Gone Off-Focus","Day 4: Mini Pizza Offerings and Jim's Alien Treasure Map Painting — An Art Crisis in Bali","Day 5: Sneeze-Inducing Herbal Scrub and Spy Fireflies — A Spa Day Full of Surprises","Day 7: Malang Apple-Eating Contest and the Mystery of \"Devil\" Rawon — East Java Culinary Adventure","Day 8: Private Lombok Beach and The Corrs' Burnt Ayam Taliwang Recipe","Day 9: Bike Gone Astray into a Gili Meno Goat Pen — Caroline's Great Escape!","Day 11: Komodo on Deck: Andrea and the Anti-Dragon Binoculars — Flores Pinisi Safari","Day 12: Batu Cermin Cave and Caroline's Echoing Voice Calling the Bats","Day 13: A Sumba Horse Wants to Carry Andrea (Strictly Forbidden by Nisa) — Charm of the Traditional Village","Day 16: Klotok Boat Down the River: Jim and the Book \"Philosophy of the Proboscis Monkey,\" Caroline Becomes an Impromptu DJ","Day 16 (cont.): Klotok Boat Down the River","Day 17: Camp Leakey and the Orangutan Drawn to Andrea's Blonde Hair (Luckily, Just Curious)","Day 19: Caroline Becomes the Irish Flag: A Sunburn Story from Forgetting Sunblock at Kakaban","Day 20: Learning Dayak Dance: Jim the Stiffest, Sharon the Most Graceful, Andrea the Most Extra","Day 21: The Chopstick Challenge: Caroline's Chopstick Gets Stuck in the Village Head's Hat, Nisa Wins Big (Quietly)","Day 22: Lake Toba and Sharon's Batak Karaoke That Touches (and Confuses) the Locals","Day 23: Learning to Cook Arsik Fish (and Jim Asking If the Fish Can Play Music Too)","Day 24: Nisa and Reza's Romantic Kayak on Lake Toba (Interrupted by Alex's Mischievous Drone)","Day 26: Snorkeling in Spice-Island Paradise and Nutmeg Juice That Gets Jim Philosophizing About Life","Day 27: Meditating Facing Banda's Volcano: Andrea Tries to Control Its Smoke with Her Mind","Day 29: Sunrise Yoga on Deck (and Nisa Almost Falling In from a Too-Difficult Pose)","(Epilogue) The \"Nusantara Whispers\" Album and the \"President Nisa Lost in the Floating Market\" Music Video"],
+  "istana-fyp": ["New Seeds of Unrest and National Creativity","A Bold Spark, Guarding Values","Launch and Early Grassroots Echoes","First Work, First Storm","The First Blow to Integrity: Andi's Plagiarism","Opportunistic Echoes, Whispers of Doubt","Dancing on the Edge of Adaptation and a Story of Resilience","Calm Ripples, Undercurrents, and a Compass That Keeps","Echoes of Injustice from the Nation's Corners","Forging the Sword of Justice, Choosing a War Commander","Political Earthquake of the Nomination","Intimidation and Psychological Warfare","Silent Operation, Decisive Blow","Wave of Cleansing and the Fruit of Justice"],
+  "bayang-bayang-kematian": ["Tragedy on a Quiet Road","Alex, Prime Suspect","Damning New Evidence","Euphoria and a Hidden Threat","First Slander Against Reza's Business","Pawn Activated","Fake Scandal Rocks the Palace","Early Cracks and Unease","Nisa's Panicked Decision","Zidan's Body Found","Secret Behind the Palace Walls","Four Problems Closing In","Pressure on Reza","Nisa's Reflection on Sacrifice","A Wounded Alex","Focus Diverted","Nisa's Lowest Point","Reaching Out to Angel","Hope for Reza","Plan for a Comeback","Investigation Points to Dinda","Unraveling Vania's Mystery","Cornered","The Mastermind Revealed","The Mastermind Behind the Mastermind"],
+  "curhat-cinta-istana": ["Behind the Scenes of the Palace of the Heart","Self-Foundation and the First Spark","Blind Jealousy from Social Media","Peer Pressure","A Pain That Doesn't Bleed","Dating vs. the Future","The Pleasure of Being Alone","The Gates of Marriage and Early Reality","In-Laws vs. Daughter-in-Law","Fighting Healthily Without Breaking Things","\"Why Did You Change?\"","My Career vs. Your Career","Expectation vs. Reality!!","More Than Roommates","Mid-Life Crisis??","Father Says \"Yes,\" Mother Says \"No\"","The Sandwich Generation","Busy Is Fine, Distant Isn't!","Healing Wounds, Releasing Burdens","Letting Go of What Should Leave","Forgiving Is a Relief","Storm of a Third Party","Rebuilding Self-Worth","My Happiness, My Responsibility","When Love Gives Wings","Me, You, Us","Empty Nest Syndrome","Harbor of Dusk","When Illness Tests the Vow of Togetherness","Reflection and Hope for the Future","Echo of the Palace of the Heart","(Epilogue) Echo of the Palace of the Heart — Weaving the Nation's Common Thread"],
+  "dokter-cinta-dunia": ["Seed of a Global Calling","Global Love Therapy","First Steps Onto the World Stage","First Stories of Liberation","Cross-Cultural and Systemic Challenges","Global Love Alliance","Real Impact on the World Stage","A Heavenly Gift in Relationships","Eternal Legacy"],
+  "ketika-langit-tak-lagi-batasnya": ["Grand Stage, Weary Soul","Compatibility","A Dimly Shining Star","A Moving First Encounter","Seeds of Discord","Undeniable Compatibility","\"You, Not Your Status\"","Ghosts of the Past","Proof of Love and Loyalty","An Imbalance Turned Strength","Rock Bottom, Together","A Vow of Two Free Souls","Harmony in Difference","Pushing Each Other to Soar","An Inspiration to Those Around Them","The Sky Is No Longer the Limit"],
+  "terukir-sebelum-terjadi": ["Six Lives, One City","The First Crack","Repeated Misfortune","A Voice from the Old Mihrab","An Uneven Echo","Min Qabli An Nabra'aha","Between Fatalism and Effort","La Ta'sau: Two Widows, One Acceptance","La Tafrahu: A Mirror for the Successful","Mukhtalin Fakhur: Shedding the Cloak of Arrogance","The Common Thread That Binds","Patience That Nurtures","Gratitude That Brings Ease","Effort Within the Frame of Trust in God","Finding Sakinah","The Perfect Weave of the Master Weaver"],
+};
+
+class Component extends DCLogic {
+  state = { view: 'home', filterGenre: null, selectedSlug: null, selectedChapterNum: null, novelCache: {}, bookmarks: [], history: {}, novels: [], lang: 'id', theme: 'dark', searchQuery: '' };
+
+  THEME_VARS = {
+    dark: { '--bg-page':'#0f1216', '--bg-header':'rgba(15,18,22,0.72)', '--wash-a':'oklch(0.22 0.09 25 / 0.5)', '--wash-b':'oklch(0.2 0.09 250 / 0.45)', '--wash-a-size':'65% 50%', '--text':'#eef1f3', '--secondary':'#c4cbd1', '--muted':'#8b96a1', '--muted2':'#5c6670', '--border':'#262d35', '--card':'#151a20', '--reader-text':'#dfe4e8' },
+    light: { '--bg-page':'#ffffff', '--bg-header':'rgba(255,255,255,0.82)', '--wash-a':'oklch(0.8 0.13 345 / 0.95)', '--wash-b':'oklch(0.85 0.1 15 / 0.9)', '--wash-a-size':'85% 65%', '--text':'#1c1a17', '--secondary':'#3d3a35', '--muted':'#6b665e', '--muted2':'#948f85', '--border':'#e8b7ba', '--card':'#ffffff', '--reader-text':'#262319' },
+  };
+
+  applyTheme(theme) {
+    const vars = this.THEME_VARS[theme] || this.THEME_VARS.dark;
+    for (const k in vars) document.documentElement.style.setProperty(k, vars[k]);
+  }
+
+  componentDidMount() {
+    try {
+      const bm = JSON.parse(localStorage.getItem('rin_bookmarks') || '[]');
+      const hist = JSON.parse(localStorage.getItem('rin_history') || '{}');
+      const theme = localStorage.getItem('rin_theme') || 'dark';
+      this.setState({ bookmarks: bm, history: hist, theme });
+      this.applyTheme(theme);
+    } catch (e) {}
+    fetch('./data/index.json').then(r => r.json()).then(idx => this.setState({ novels: idx })).catch(() => {});
+    this.hydrateFromHash();
+  }
+
+  toggleLang = () => this.setState(s => ({ lang: s.lang === 'id' ? 'en' : 'id' }));
+
+  toggleTheme = () => {
+    this.setState(s => {
+      const theme = s.theme === 'dark' ? 'light' : 'dark';
+      this.applyTheme(theme);
+      localStorage.setItem('rin_theme', theme);
+      return { theme };
+    });
+  };
+
+  onSearchChange = (e) => this.setState({ searchQuery: e.target.value });
+  clearSearch = () => this.setState({ searchQuery: '' });
+
+  toggleBookmark = (slug) => {
+    this.setState(s => {
+      const has = s.bookmarks.includes(slug);
+      const bookmarks = has ? s.bookmarks.filter(x => x !== slug) : [...s.bookmarks, slug];
+      localStorage.setItem('rin_bookmarks', JSON.stringify(bookmarks));
+      return { bookmarks };
+    });
+  };
+
+  recordHistory = (slug, chapterNum) => {
+    this.setState(s => {
+      const history = { ...s.history, [slug]: { chapterNum, ts: Date.now() } };
+      localStorage.setItem('rin_history', JSON.stringify(history));
+      return { history };
+    });
+  };
+
+  ensureLoaded(slug) {
+    if (this.state.novelCache[slug]) return;
+    fetch('./data/' + slug + '.json')
+      .then(r => r.json())
+      .then(data => this.setState(s => ({ novelCache: { ...s.novelCache, [slug]: data } })))
+      .catch(() => {});
+  }
+
+  goHome = () => { location.hash = ''; this.setState({ view: 'home', selectedSlug: null, selectedChapterNum: null }); };
+  goUniverse = () => this.setState({ view: 'universe' });
+  openNovel = (slug) => { this.ensureLoaded(slug); this.setState({ view: 'novel', selectedSlug: slug }); };
+  startReading = (slug, chapterNum) => { this.ensureLoaded(slug); const cn = chapterNum || 1; this.recordHistory(slug, cn); location.hash = '#/' + slug + '/' + cn; this.setState({ view: 'reader', selectedSlug: slug, selectedChapterNum: cn }); };
+  backToNovel = () => this.setState({ view: 'novel' });
+  goChapter = (num) => { this.recordHistory(this.state.selectedSlug, num); location.hash = '#/' + this.state.selectedSlug + '/' + num; this.setState({ selectedChapterNum: num }); };
+
+  hydrateFromHash = () => {
+    const m = /^#\/([a-z0-9-]+)\/(\d+)$/.exec(location.hash);
+    if (!m) return;
+    const slug = m[1];
+    const requestedChapter = parseInt(m[2], 10);
+    fetch('./data/' + slug + '.json').then(r => {
+      if (!r.ok) throw new Error('novel not found: ' + slug);
+      return r.json();
+    }).then(data => {
+      const cn = requestedChapter >= 1 && requestedChapter <= data.chapterCount ? requestedChapter : 1;
+      this.setState(s => ({ novelCache: { ...s.novelCache, [slug]: data } }));
+      this.recordHistory(slug, cn);
+      location.hash = '#/' + slug + '/' + cn;
+      this.setState({ view: 'reader', selectedSlug: slug, selectedChapterNum: cn });
+    }).catch(() => {});
+  };
+
+  localize(n, lang) {
+    if (lang === 'id' || !EN_BY_SLUG[n.slug]) return n;
+    const en = EN_BY_SLUG[n.slug];
+    return {
+      ...n,
+      title: EN_TITLE[n.slug] || n.title,
+      role: en.role || n.role,
+      blurb: en.blurb || n.blurb,
+      synopsis: en.synopsis || n.synopsis,
+      genre: n.genre.map(g => GENRE_EN[g] || g),
+    };
+  }
+
+  renderVals() {
+    const lang = this.state.lang;
+    const t = UI[lang];
+    const idxRaw = this.state.novels;
+    const idx = idxRaw.map(n => this.localize(n, lang));
+    const filterGenre = this.state.filterGenre;
+    const genres = [...new Set(idxRaw.flatMap(n => n.genre))].sort();
+    const genreChips = genres.map(g => ({
+      name: lang === 'en' ? (GENRE_EN[g] || g) : g, active: g === filterGenre, inactive: g !== filterGenre,
+      onClick: () => this.setState({ filterGenre: g === filterGenre ? null : g }),
+    }));
+    const chLabel = (count) => lang === 'id' ? (count + ' bab') : (count + ' chapters');
+    const searchQuery = this.state.searchQuery || '';
+    const searchLower = searchQuery.trim().toLowerCase();
+    const matchesSearch = (n) => !searchLower || [n.title, n.blurb, n.synopsis, ...(n.genre || [])].join(' ').toLowerCase().includes(searchLower);
+    const byGenre = filterGenre ? idx.filter((n, i) => idxRaw[i].genre.includes(filterGenre)) : idx;
+    const bySearch = byGenre.filter(matchesSearch);
+    const filtered = bySearch.map(n => ({
+      ...n, onOpen: () => this.openNovel(n.slug), coverUrl: './covers/' + n.slug + '.png', chapterLabel: chLabel(n.chapterCount),
+    }));
+    const hasNoResults = filtered.length === 0;
+
+    const view = this.state.view;
+    const slug = this.state.selectedSlug;
+    const novelMetaRaw = slug ? idxRaw.find(n => n.slug === slug) : null;
+    const novelMeta = novelMetaRaw ? { ...this.localize(novelMetaRaw, lang), coverUrl: './covers/' + slug + '.png',
+      chapterWordLabel: lang === 'id' ? (novelMetaRaw.chapterCount + ' bab · ' + novelMetaRaw.wordCount + ' kata') : (novelMetaRaw.chapterCount + ' chapters · ' + novelMetaRaw.wordCount + ' words') } : null;
+    const isBookmarked = !!(slug && this.state.bookmarks.includes(slug));
+
+    const history = this.state.history;
+    const continueReading = Object.entries(history)
+      .sort((a, b) => b[1].ts - a[1].ts)
+      .map(([s, h]) => {
+        const meta = idxRaw.find(n => n.slug === s);
+        if (!meta) return null;
+        return { title: (lang === 'en' && EN_TITLE[s]) ? EN_TITLE[s] : meta.title, coverUrl: './covers/' + s + '.png', chapterLabel: (lang === 'id' ? 'Bab ' : 'Chapter ') + h.chapterNum, onOpen: () => this.startReading(s, h.chapterNum) };
+      }).filter(Boolean).slice(0, 6);
+    const hasContinue = continueReading.length > 0;
+
+    const bookmarks = this.state.bookmarks;
+    const bookmarked = idxRaw.filter(n => bookmarks.includes(n.slug)).map(n => ({
+      title: (lang === 'en' && EN_TITLE[n.slug]) ? EN_TITLE[n.slug] : n.title, coverUrl: './covers/' + n.slug + '.png', onOpen: () => this.openNovel(n.slug),
+    }));
+    const hasBookmarks = bookmarked.length > 0;
+
+    const novelFull = slug ? this.state.novelCache[slug] : null;
+    const chapterNum = this.state.selectedChapterNum;
+    const enHeadings = slug ? EN_HEADINGS[slug] : null;
+    const chapters = novelFull ? novelFull.chapters.map(c => ({
+      ...c, heading: (lang === 'en' && enHeadings && enHeadings[c.number - 1]) ? enHeadings[c.number - 1] : c.heading,
+      onOpen: () => this.startReading(slug, c.number),
+    })) : [];
+    const chapterRaw = novelFull && chapterNum ? novelFull.chapters[chapterNum - 1] : null;
+    const enFullText = novelFull && novelFull.chaptersEn && novelFull.chaptersEn[String(chapterNum)];
+    const chapter = chapterRaw ? { ...chapterRaw,
+      heading: (lang === 'en' && enHeadings && enHeadings[chapterNum - 1]) ? enHeadings[chapterNum - 1] : chapterRaw.heading,
+      paragraphs: (lang === 'en' && enFullText) ? enFullText : chapterRaw.paragraphs,
+    } : null;
+    const chapterHasFullEn = !!enFullText;
+    const total = novelFull ? novelFull.chapterCount : (novelMetaRaw ? novelMetaRaw.chapterCount : 0);
+    const hasPrev = !!(novelFull && chapterNum > 1);
+    const hasNext = !!(novelFull && chapterNum < novelFull.chapterCount);
+
+    const bySlug = (s) => {
+      const nr = idxRaw.find(x => x.slug === s);
+      if (!nr) return { title: '', sub: '', onOpen: () => {} };
+      const en = EN_BY_SLUG[s];
+      return { title: (lang === 'en' && EN_TITLE[s]) ? EN_TITLE[s] : nr.title, sub: (lang === 'en' && en) ? en.sub : (this.SUB_ID[s] || ''), onOpen: () => this.openNovel(s) };
+    };
+    const nKA = bySlug('kota-algoritma'), nFB = bySlug('faith-and-beats'), nKMI = bySlug('ketukan-menuju-istana'),
+      nNUR = bySlug('nur-ai'), nIPB = bySlug('istana-penuh-bara'), nCORRS = bySlug('the-corrs-liburan-di-indonesia'),
+      nFYP = bySlug('istana-fyp'), nBBK = bySlug('bayang-bayang-kematian'), nA2 = bySlug('dokter-cinta-dunia'),
+      nKL = bySlug('ketika-langit-tak-lagi-batasnya'), nTST = bySlug('terukir-sebelum-terjadi'), nCCI = bySlug('curhat-cinta-istana');
+
+    const order = ['istana-penuh-bara','istana-fyp','bayang-bayang-kematian','dokter-cinta-dunia','curhat-cinta-istana','faith-and-beats','ketukan-menuju-istana','nur-ai','kota-algoritma','ketika-langit-tak-lagi-batasnya','terukir-sebelum-terjadi','the-corrs-liburan-di-indonesia'];
+    const rezaSlugs = ['istana-penuh-bara','istana-fyp','bayang-bayang-kematian','dokter-cinta-dunia','curhat-cinta-istana','faith-and-beats','ketukan-menuju-istana','the-corrs-liburan-di-indonesia'];
+    const summaryList = order.map((s, i) => {
+      const n = idxRaw.find(x => x.slug === s);
+      if (!n) return null;
+      const loc = this.localize(n, lang);
+      return { title: loc.title, num: i + 1, hasReza: rezaSlugs.includes(s), blurb: loc.blurb, onOpen: () => this.openNovel(s) };
+    }).filter(Boolean);
+
+    const readingFont = this.props.readingFont ?? 'Sans-serif';
+    const isSerifFont = readingFont === 'Serif';
+    const showBadges = this.props.showUniverseBadges ?? true;
+
+    return {
+      t, langLabel: lang === 'id' ? 'EN' : 'ID', toggleLang: this.toggleLang,
+      isHome: view === 'home', isNotHome: view !== 'home',
+      isNovel: view === 'novel',
+      isReader: view === 'reader',
+      genreChips, filtered, hasFilter: !!filterGenre, hasFilterNot: !filterGenre,
+      searchQuery, hasSearch: !!searchQuery, onSearchChange: this.onSearchChange, clearSearch: this.clearSearch, hasNoResults,
+      toggleTheme: this.toggleTheme, themeIcon: this.state.theme === 'dark' ? '☀' : '☽',
+      clearFilter: () => this.setState({ filterGenre: null }),
+      novelMeta, novelLoading: !!slug && !novelFull,
+      chapters, chapter, chapterNum, selectedSlug: slug,
+      chapterReady: !!chapter, chapterNotReady: !chapter,
+      chapterOf: (lang === 'id' ? 'BAB ' : 'CHAPTER ') + chapterNum + ' / ' + total,
+      chapterLabelLine: (lang === 'id' ? 'Bab ' : 'Chapter ') + chapterNum,
+      hasPrev, hasPrevNot: !hasPrev, hasNext,
+      isTranslated: lang === 'en' && !chapterHasFullEn,
+      prevChapter: () => this.goChapter(chapterNum - 1),
+      nextChapter: () => this.goChapter(chapterNum + 1),
+      startReadFirst: () => this.startReading(slug, 1),
+      backToNovel: this.backToNovel,
+      goHome: this.goHome, goUniverse: this.goUniverse,
+      hasContinue, continueReading, hasBookmarks, bookmarked,
+      isBookmarked, isBookmarkedNot: !isBookmarked, toggleBookmark: () => this.toggleBookmark(slug),
+      nKA, nFB, nKMI, nNUR, nIPB, nCORRS, nFYP, nBBK, nA2, nKL, nTST, nCCI,
+      summaryList,
+      isSerifFont, isSansFont: !isSerifFont, showBadges,
+    };
+  }
+
+  SUB_ID = {
+    "kota-algoritma": "Dystopia AI pengendali cinta",
+    "faith-and-beats": "Prequel · Romansa",
+    "ketukan-menuju-istana": "Jembatan · 26 bab",
+    "nur-ai": "Spin-off · Alex remaja",
+    "the-corrs-liburan-di-indonesia": "Spin-off",
+    "istana-fyp": "Ekonomi kreatif, tekanan bisnis",
+    "bayang-bayang-kematian": "Konspirasi, penculikan",
+    "dokter-cinta-dunia": "Pasca-presidensi, panggung dunia",
+    "ketika-langit-tak-lagi-batasnya": "Karya fiksi Nisa",
+    "terukir-sebelum-terjadi": "Enam kehidupan terhubung",
+    "curhat-cinta-istana": "Podcast keluarga Nisa",
+  };
+}
+</script>
+<script src="./engagement.js"></script>
+</body>
+</html>
