@@ -1,6 +1,6 @@
 services:
   app:
-    build: https://github.com/REPLACE_ME/perpustakaan-nisa-app.git
+    image: ghcr.io/shabrinafarhanisa-commits/perpustakaan-nisa:latest
     restart: unless-stopped
     labels:
       - traefik.enable=true
